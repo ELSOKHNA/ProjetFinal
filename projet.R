@@ -3,6 +3,7 @@
 prop_test_context <- function(x, n, p0 = 0.5, conf_level = 0.95) {
   
   # 1. appel à prop.test()
+  
   res <- prop.test(
     x = x,
     n = n,
@@ -27,6 +28,7 @@ prop_test_context <- function(x, n, p0 = 0.5, conf_level = 0.95) {
   )
   
   # 4. lui donner une classe S3
+  
   class(out) <- "context_table"
   
   # 5. retourner l'objet
@@ -37,6 +39,7 @@ prop_test_context <- function(x, n, p0 = 0.5, conf_level = 0.95) {
 library(ggplot2)
 
 # Méthode plot.context_table
+
 plot.context_table <- function(x, ...) {
   # x est l'objet de classe "context_table"
   
@@ -64,3 +67,17 @@ plot.context_table <- function(x, ...) {
 obj <- prop_test_context(12, 20, p0 = 0.5)
 
 plot(obj)   # appelle plot.context_table(obj)
+
+# Méthode print de prop_test_context  :
+
+print.context_table  <- function(y,...){
+  # y est l'objet de classe "context_table"
+  
+  cat("Test de proportion : \n")
+  cat("********************\n")
+  cat("Le nombre d'essais est de:  ", y$n,"\n")
+  cat("La probabilité du succès est: ",y$p0*100,"\n")
+  cat("La proportion de succès est de: ",y$prop_estimee*100,"%",
+      "avec une p_value de: ",y$p_value,"à", y$conf_level*100,"%\n" )
+  }
+
