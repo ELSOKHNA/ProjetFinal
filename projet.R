@@ -81,3 +81,63 @@ print.context_table  <- function(y,...){
       "avec une p_value de: ",y$p_value,"à", y$conf_level*100,"%\n" )
   }
 
+## creer une fonction lm_contex() qui permettra 
+## de faire des régressions linéaires
+
+lm_context <- function(formula, data) {
+  
+  ## Ajustement du modele
+  model <- lm(formula = formula, data = data)
+  sm <- summary(model)
+  
+  ## Liste des objets que retournera la foonction
+  out <- list(
+    call = model$call,
+    variables = terms(model), 
+    residus_model = summary(residuals(model)),
+    coefficients = coefficients(model),
+    sigma = sm$sigma,
+    r2 = sm$r.squared,
+    adj_r2 = sm$adj.r.squared,
+    statfisher = sm$fstatistic,
+    df = model$df.residual
+  )
+  
+  
+  ## Specification de la classe de l'objet retourne
+  class(out) <- "lm_context"
+  
+  ## Sortie
+  return(out)
+}
+
+## Ajouter  une methode S3 en l occurence summary à notre fonction
+
+summary.lm_context <- function(objet, ...){
+  
+  sommaire <- list(
+    call = objet$call,
+    variables = objet$variables, 
+    residus_model = objet$residual_model,
+    coefficients = objet$coefficients,
+    sigma = objet$sigma,
+    r2 = objet$r.squared,
+    adj_r2 = objet$adj.r.squared,
+    statfisher = objet$fstatistic,
+    df = objet$df
+  )
+  
+  
+  ## definition de la classe de summary.lm_context
+  
+  class(sommaire) <- "summary.lm_context"
+  
+  return(sommaire)
+}
+
+data("iris")
+data(mtcars)
+test1 <- lm_context(mpg ~ hp + wt, data = mtcars)
+summary.lm_context(m)
+test2 <- lm_context(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width + Species) 
+
